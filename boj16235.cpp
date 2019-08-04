@@ -8,7 +8,6 @@ const int MAX = 11;
 typedef struct {
 	int x, y;		// 좌표
 	int age;		// 나이
-	bool isDead;	// 죽었는가
 } treeinfo;
 
 // 북서쪽부터 시계방향
@@ -24,71 +23,84 @@ vector<treeinfo> trees;
 
 int n;		// 땅 크기
 
-bool agesort(treeinfo i1, treeinfo i2)
-{
-	return i1.age < i2.age;
-}
-
 void season()
 {
+	vector<treeinfo> deadtrees;		// 죽은 나무 정보 저장 벡터
+	vector<treeinfo> alivetrees;	// 살아있는 나무 정보 저장 벡터
+	vector<treeinfo> fivetrees;		// 5살 나무 정보 저장 벡터
+	vector<treeinfo> birthtrees;	// 태어난 나무 정보 저장 벡터
+
 	// spring
 	for (int i = 0; i < trees.size(); ++i)
 	{
 		// 양분이 부족하면
-		if (nur[trees[i].y][trees[i].x] - trees[i].age < 0)
+		if (nur[trees[i].x][trees[i].y] - trees[i].age < 0)
 		{
-			trees[i].isDead = true;		// 죽음
+			deadtrees.push_back(trees[i]);	// 죽은 나무의 정보를 넣어줌
 		}
 		else
 		{
-			nur[trees[i].y][trees[i].x] -= trees[i].age;
+			nur[trees[i].x][trees[i].y] -= trees[i].age;
 			trees[i].age++;
-		}
-	}
 
-	// summer
-	for (int i = 0; i < trees.size(); ++i)
-	{
-		if (trees[i].isDead)	// 죽은 나무
-		{
-			nur[trees[i].y][trees[i].x] += (trees[i].age / 2);	// 양분이 됨
-			trees.erase(trees.begin() + i);						// 정보 삭제
-		}
-	}
+			alivetrees.push_back(trees[i]);		// 살아있는 나무의 정보를 넣어줌
 
-	// fall
-	for (int i = 0; i < trees.size(); ++i)
-	{
-		if (trees[i].age % 5 == 0)		// 나이가 5의 배수이면
-		{
-			// 8방향으로 1살 나무 생성
-			for (int j = 0; j < 8; ++j)
+			if (trees[i].age % 5 == 0)			// 나이가 5의 배수이면
 			{
-				int nx = trees[i].x + dx[j];
-				int ny = trees[i].y + dy[j];
-
-				if (nx <= 0 || ny <= 0 || nx > n || ny > n) continue;
-				
-				treeinfo t;
-				t.x = nx;
-				t.y = ny;
-				t.age = 1;
-				t.isDead = false;
-
-				trees.push_back(t);
+				fivetrees.push_back(trees[i]);	// 5살이 된 나무의 정보를 넣어줌
 			}
 		}
 	}
 
-	// winter
-	for (int i = 0; i < n; ++i)
+	// summer
+	for (int i = 0; i < deadtrees.size(); ++i)
 	{
-		for (int j = 0; j < n; ++j)
+		nur[deadtrees[i].x][deadtrees[i].y] += (deadtrees[i].age / 2);	// 양분이 됨
+	}
+
+	// fall
+	for (int i = 0; i < fivetrees.size(); ++i)
+	{
+		// 8방향으로 1살 나무 생성
+		for (int j = 0; j < 8; ++j)
+		{
+ 			int nx = fivetrees[i].x + dx[j];
+			int ny = fivetrees[i].y + dy[j];
+
+			if (nx <= 0 || ny <= 0 || nx > n || ny > n) continue;
+
+			birthtrees.push_back({ nx, ny, 1 });		// 태어난 나무의 정보 저장
+		}
+	}
+
+	// winter
+	for (int i = 1; i <= n; ++i)
+	{
+		for (int j = 1; j <= n; ++j)
 		{
 			// s2d2가 양분 추가
 			nur[i][j] += s2d2[i][j];
 		}
 	}
+
+	// 1년이 지난 후
+	trees.clear();		// 나무 정보 삭제
+
+	for (int i = 0; i < birthtrees.size(); ++i)
+	{
+		trees.push_back(birthtrees[i]);		// 태어난 나무 정보 먼저 저장
+	}
+
+	for (int i = 0; i < alivetrees.size(); ++i)
+	{
+		trees.push_back(alivetrees[i]);		// 살아있는 나무 정보 저장
+	}
+
+	// 정보 초기화
+	deadtrees.clear();
+	alivetrees.clear();
+	fivetrees.clear();
+	birthtrees.clear();
 }
 
 int main(void)
@@ -114,20 +126,12 @@ int main(void)
 		int x, y, age;
 		cin >> x >> y >> age;
 		
-		treeinfo t;
-		t.x = x;
-		t.y = y;
-		t.age = age;
-		t.isDead = false;
-
-		trees.push_back(t);
+		trees.push_back({x, y, age});
 	}
 
 	int year = 1;
 	while (year <= k)
 	{
-		sort(trees.begin(), trees.end(), agesort);		// 나이 순으로 정렬
-
 		season();
 
 		year++;
