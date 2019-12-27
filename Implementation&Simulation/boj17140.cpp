@@ -4,44 +4,43 @@
 #include <cstring>
 using namespace std;
 
-const int MAX = 101;
+int r, c, k;
+int arr[101][101];
 
-void solve(int A[][MAX], int r, int c, int k)
+void Solve()
 {
 	int x = 3, y = 3;
 
-	int cnt[MAX] = { 0, };
+	int cnt[101] = { 0, };
 
-	// priority_queue<자료형, 구현체, 비교연산자>
-	// priority_queue에 pair를 넣으면 first에 의해 정렬됨
 	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
 
-	for (int i = 0; i < MAX; ++i)
+	for (int i = 0; i < 101; ++i)
 	{
-		// A[r][c]에 들어있는 값이 k면
-		if (A[r][c] == k)
+		// arr[r][c]에 들어있는 값이 k면
+		if (arr[r][c] == k)
 		{
 			cout << i << endl;
 			return;
 		}
 
-		if (x >= y)		// R연산
+		// R연산
+		if (x >= y)
 		{
 			for (int i = 1; i <= x; ++i)	// 행
 			{
-				// 초기화
 				memset(cnt, 0, sizeof(cnt));
 
 				for (int j = 1; j <= y; ++j)	// 열
 				{
-					if (A[i][j] > 0)
+					if (arr[i][j] > 0)
 					{
-						cnt[A[i][j]]++;
-						A[i][j] = 0;
+						cnt[arr[i][j]]++;
+						arr[i][j] = 0;
 					}
 				}
 
-				for (int j = 1; j < MAX; ++j)
+				for (int j = 1; j < 101; ++j)
 				{
 					if (cnt[j] > 0) pq.push(make_pair(cnt[j], j));
 				}
@@ -51,29 +50,29 @@ void solve(int A[][MAX], int r, int c, int k)
 
 				for (int j = 1; j <= len; j += 2)
 				{
-					A[i][j] = pq.top().second;
-					A[i][j + 1] = pq.top().first;
+					arr[i][j] = pq.top().second;
+					arr[i][j + 1] = pq.top().first;
 					pq.pop();
 				}
 			}
 		}
-		else			// C연산
+		// C연산
+		else
 		{
-			for (int i = 1; i <= y; ++i)		// 열
+			for (int i = 1; i <= y; ++i)	// 열
 			{
-				// 초기화
 				memset(cnt, 0, sizeof(cnt));
 
 				for (int j = 1; j <= x; ++j)	// 행
 				{
-					if (A[j][i] > 0)
+					if (arr[j][i] > 0)
 					{
-						cnt[A[j][i]]++;
-						A[j][i] = 0;
+						cnt[arr[j][i]]++;
+						arr[j][i] = 0;
 					}
 				}
 
-				for (int j = 1; j < MAX; ++j)
+				for (int j = 1; j < 101; ++j)
 				{
 					if (cnt[j] > 0) pq.push(make_pair(cnt[j], j));
 				}
@@ -83,8 +82,8 @@ void solve(int A[][MAX], int r, int c, int k)
 
 				for (int j = 1; j <= len; j += 2)
 				{
-					A[j][i] = pq.top().second;
-					A[j + 1][i] = pq.top().first;
+					arr[j][i] = pq.top().second;
+					arr[j + 1][i] = pq.top().first;
 					pq.pop();
 				}
 			}
@@ -95,20 +94,23 @@ void solve(int A[][MAX], int r, int c, int k)
 	cout << "-1" << endl;
 }
 
-int main(void)
+void Input()
 {
-	int r, c, k;
 	cin >> r >> c >> k;
-
-	int A[MAX][MAX] = { 0, };
 
 	for (int i = 1; i <= 3; ++i)
 	{
 		for (int j = 1; j <= 3; ++j)
 		{
-			cin >> A[i][j];
+			cin >> arr[i][j];
 		}
 	}
+}
 
-	solve(A, r, c, k);
+int main(void)
+{
+	ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+
+	Input();
+	Solve();
 }

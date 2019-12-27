@@ -21,7 +21,7 @@ int main(void)
 	{
 		if (alpha[i] % 2 && flag)
 		{
-			cout << "I'm sorry Hansoo";
+			cout << "I'm Sorry Hansoo";
 			return 0;
 		}
 		else if (alpha[i] % 2 && !flag)
@@ -48,4 +48,5 @@ int main(void)
 	for (int i = 0; i < answer.size(); ++i) cout << answer[i];
 	if (mid.size()) cout << mid[0];
 	for (int i = answer.size() - 1; i >= 0; --i) cout << answer[i];
+	cout << "\n";
 }
