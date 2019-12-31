@@ -1,47 +1,41 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
+
+int score[100];
+int result[10000];
 
 int main(void)
 {
-	int tc;
-	cin >> tc;
+	ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 
-	for (int i = 1; i <= tc; ++i)
+	int T;
+	cin >> T;
+
+	for (int tc = 1; tc <= T; ++tc)
 	{
-		int n = 0;
-		cin >> n;
+		memset(score, 0, sizeof(score));
+		memset(result, 0, sizeof(result));
 
-		int* score = new int[n];
-		int result[10000] = { 0, };
+		int n;
+		cin >> n;
 
 		int max = 0;
 		result[0] = 1;
 
-		for (int j = 0; j < n; ++j)
+		for (int i = 0; i < n; ++i)
 		{
-			cin >> score[j];
-			max += score[j];
+			cin >> score[i];
+			max += score[i];
 
-			for (int k = max; k >= 0; --k)
-			{
-				if (result[k] > 0)
-				{
-					result[k + score[j]]++;
-				}
-			}
+			for (int j = max; j >= 0; --j)
+				if (result[j] > 0) result[j + score[i]]++;
 		}
 
 		int answer = 0;
-		for (int j = 0; j < 10000; ++j)
-		{
-			if (result[j] > 0)
-			{
-				answer++;
-			}
-		}
+		for (int i = 0; i < 10000; ++i)
+			if (result[i] > 0) answer++;
 
-		cout << "#" << i << " " << answer << endl;
-
-		delete[] score;
+		cout << "#" << tc << " " << answer << "\n";
 	}
 }
