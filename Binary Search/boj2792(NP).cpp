@@ -1,15 +1,13 @@
-// 2020.06.23 23:15~
-// 백준 2792
-// 
+// 2020.06.23 23:15~2020.06.24 00:09
+// 백준 2792 보석 상자
+// 이분 탐색
 
 #include <iostream>
 #include <algorithm>
 using namespace std;
 
-#define MAX 1000000000
-
-int n, m, arr[300000];
-long long large;
+int n, m, arr[300001];
+long long large = 0;
 
 void Input()
 {
@@ -26,15 +24,15 @@ void Solve()
 {
 	sort(arr, arr + m);
 
-	long long left = 0, right = MAX;
-	long long answer = 0;
+	long long left = 0, right = large;
+	long long answer = 1000000000;
 
-	while (left < right)
+	while (left <= right)
 	{
 		long long mid = (left + right) / 2;
 		long long tmp = 0;
 
-		for (int i = 0; i < n; ++i)
+		for (int i = 0; i < m; ++i)
 		{
 			tmp += arr[i] / mid;
 
@@ -43,7 +41,7 @@ void Solve()
 
 		if (tmp <= n)
 		{
-			answer = max(answer, mid);
+			answer = min(answer, mid);
 			right = mid - 1;
 		}
 		else
