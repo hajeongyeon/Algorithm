@@ -1,0 +1,106 @@
+// 2020.09.07 23:24~24:28
+// 프로그래머스 프렌즈4블록
+// 구현
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int m, int n, vector<string> board) 
+{
+    int answer = 0;
+    int dx[3] = { 0, 1, 1 }, dy[3] = { 1, 0, 1 };
+
+    while (1)
+    {
+        bool check[30][30] = { 0, };
+
+        // 2x2 형태로 붙어있는지 판단
+        for (int i = 0; i < m - 1; ++i)
+        {
+            for (int j = 0; j < n - 1; ++j)
+            {
+                if (board[i][j] == '0') continue;
+
+                char match = board[i][j];
+                int matchcnt = 0;
+
+                for (int k = 0; k < 3; ++k)
+                {
+                    if (board[i + dx[k]][j + dy[k]] != match) break;
+
+                    matchcnt++;
+                }
+
+                // 붙어있으면 check 판에 표시
+                if (matchcnt == 3)
+                {
+                    check[i][j] = true;
+                    for (int k = 0; k < 3; ++k)
+                        check[i + dx[k]][j + dy[k]] = true;
+                }
+            }
+        }
+
+        bool breakchk = true;
+
+        // check == true면 실제 판에서 삭제
+        for (int i = 0; i < m; ++i)
+        {
+            for (int j = 0; j < n; ++j)
+            {
+                if (check[i][j]) 
+                {
+                    board[i][j] = '0';
+                    breakchk = false;
+                    answer++;
+                }
+            }
+        }
+
+        // breakchk == true면 지울 블록이 없다는거니까 while문 break
+        if (breakchk) break;
+
+        // 윗칸의 블록을 하강시킴
+        for (int i = 0; i < n; ++i)
+        {
+            for (int j = m - 1; j >= 0; --j)
+            {
+                if (board[j][i] == '0')
+                {
+                    for (int k = j - 1; k >= 0; --k)
+                    {
+                        if (board[k][i] != '0')
+                        {
+                            board[j][i] = board[k][i];
+                            board[k][i] = '0';
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return answer;
+}
+
+int main(void)
+{
+    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+
+    int m, n;
+    vector<string> board;
+
+    cin >> m >> n;
+
+    for (int i = 0; i < m; ++i)
+    {
+        string tmp; cin >> tmp;
+        board.push_back(tmp);
+    }
+
+    cout << solution(m, n, board);
+}
