@@ -1,0 +1,46 @@
+// 2020.09.09 20:37~
+// 프로그래머스 124 나라의 숫자
+// 
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+char Get124(int& n, int idx)
+{
+    int div = pow(3, idx);
+    int remain = n % div;
+
+    if (remain == 0) remain = div;
+
+    n -= remain;
+
+    if (remain <= 1 * div / 3) return '1';
+    if (remain <= 2 * div / 3) return '2';
+    if (remain <= 3 * div / 3) return '4';
+}
+
+string solution(int n) 
+{
+    string answer = "";
+
+    for (int i = 1; n > 0; i++)
+        answer += Get124(n, i);
+
+    reverse(answer.begin(), answer.end());
+
+    return answer;
+}
+
+int main(void)
+{
+    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+
+    int n; cin >> n;
+
+    cout << solution(n);
+}
