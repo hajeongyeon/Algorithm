@@ -1,0 +1,68 @@
+// 2020.09.12 01:47~01:54
+// 프로그래머스 네트워크
+// BFS
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+int solution(int n, vector<vector<int>> computers) 
+{
+    int answer = 0;
+    bool visited[200] = { 0, };
+
+    for (int i = 0; i < n; ++i)
+    {
+        if (visited[i]) continue;
+
+        queue<int> q;
+        q.push(i);
+        visited[i] = true;
+
+        while (!q.empty())
+        {
+            int a = q.front();
+            q.pop();
+
+            for (int j = 0; j < n; ++j)
+            {
+                if (computers[a][j] == 1 && !visited[j])
+                {
+                    visited[j] = true;
+                    q.push(j);
+                }
+            }
+        }
+
+        answer++;
+    }
+
+    return answer;
+}
+
+int main(void)
+{
+    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+
+    int n; cin >> n;
+
+    vector<vector<int>> computers;
+
+    for (int i = 0; i < n; ++i)
+    {
+        vector<int> tmp;
+
+        for (int j = 0; j < n; ++j)
+        {
+            int a; cin >> a;
+            tmp.push_back(a);
+        }
+
+        computers.push_back(tmp);
+    }
+
+    cout << solution(n, computers);
+}
