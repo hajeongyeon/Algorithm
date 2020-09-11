@@ -1,0 +1,94 @@
+// 2020.09.11
+// 프로그래머스 경주로 건설
+// BFS
+// DFS로 접근하다가 8x8에서 시간 초과 나서 BFS로 다시 품
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+struct info {
+    int x, y, cost, dir;
+};
+
+int solution(vector<vector<int>> board)
+{
+    int answer = 1e9;
+    int dx[4] = { -1, 1, 0, 0 }, dy[4] = { 0, 0, -1, 1 };
+    int n = board.size();
+    int newboard[25][25] = { 0, };
+
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            newboard[i][j] = board[i][j];
+
+    queue<info> q;
+    q.push({ 0, 0, 0, -1 });
+
+    newboard[0][0] = 1;
+
+    while (!q.empty())
+    {
+        int x = q.front().x;
+        int y = q.front().y;
+        int c = q.front().cost;
+        int d = q.front().dir;
+        q.pop();
+
+        if (x == n - 1 && y == n - 1)
+        {
+            answer = min(answer, c);
+            continue;
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || ny < 0 || nx >= n || ny >= n || newboard[nx][ny] == 1) continue;
+
+            int newcost = 0;
+
+            if(d == -1 || d == i) newcost = c + 100;
+            else if (d != i) newcost = c + 600;
+
+            if (newboard[nx][ny] >= newcost || newboard[nx][ny] == 0)
+            {
+                newboard[nx][ny] = newcost;
+                q.push({ nx, ny, newcost, i });
+            }
+        }
+    }
+
+    return answer;
+}
+
+int main(void)
+{
+    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+
+    int n, m;
+    cin >> n >> m;
+
+    vector<vector<int>> vec;
+
+    for (int i = 0; i < n; ++i)
+    {
+        vector<int> row;
+
+        for (int j = 0; j < m; ++j)
+        {
+            int a; cin >> a;
+            row.push_back(a);
+        }
+
+        vec.push_back(row);
+    }
+
+    cout << solution(vec);
+}
